@@ -8,6 +8,9 @@
 #define PIR_4 25
 #define PIR_5 26
 
+#define TX2 17
+#define RX2 16
+
 Core core;
 const long cloudDataInterval = 500;
 //TaskHandle_t Task1;
@@ -16,6 +19,7 @@ int firstTime = 0;
 void setup() 
 {
   Serial.begin(57600);
+  Serial2.begin(19200, SERIAL_8N1, RX2, TX2);
 
 //  xTaskCreatePinnedToCore(
 //    Task1code,   /* Task function. */
