@@ -1,0 +1,401 @@
+#include <WiFi.h>
+#include "Adafruit_FONA.h"
+
+#define FONA_RX 27
+#define FONA_TX 26
+#define FONA_RST 4
+
+char replybuffer[255];
+
+#include <SoftwareSerial.h>
+SoftwareSerial fonaSS(FONA_TX, FONA_RX);
+SoftwareSerial *fonaSerial = &fonaSS;
+
+Adafruit_FONA fona = Adafruit_FONA(FONA_RST);
+uint8_t readline(char *buff, uint8_t maxbuff, uint16_t timeout = 0);
+uint8_t type;
+
+String number0 = "8825958660";
+String number1 = "8825958660";
+String number2 = "8825958660";
+String number3 = "8825958660";
+String number4 = "8825958660";
+String number5 = "8825958660";
+String number6 = "8825958660";
+String number7 = "8825958660";
+String number8 = "8825958660";
+String number9 = "8825958660";
+
+int numbersActive[10] = {1,1,1,1,1,1,1,1,1,1};
+int numberToDial = 0;
+
+String msg1 = "Warning SMJ Factory intruder alert - Main Door is broken.";
+String msg2 = "A.T.A.S - ALERT Sensor Is Triggered.";
+String address = "Flat No 134, Door No: 253, Rajam Nagar, 4th street, Kovalan Nagar Main Road, TVS Nagar, Madurai 625003";
+char data[20]; 
+char sensors[20];
+int triggermain, triggerSecondary = 0;
+int sensorMainDoor = 34;
+int sensor1 = 35;
+int sensor2 = 32;
+int sensor3 = 33;
+int sensor4 = 25;
+int sensor5 = 17;
+int sensor6 = 18;
+int sensor7 = 20;
+int sensor8 = 23;
+int sensor9 = 22;
+int sensor10 = 21;
+int sensor11 = 19;
+int sensor12 = 18;
+int sensor13 = 17;
+int sensor14 = 16;
+
+/* Sensors
+1 Home door
+2 - 6 PIR sensors
+7 - 11 PIR to camera
+12 PIR
+13 Emergency calling
+14 Fire sensor 
+*/
+
+void setup() {
+  while (!Serial);
+
+  Serial.begin(115200);
+  Serial.println(F("Connecting to A.T.A.S SIM800L"));
+  Serial.println(F("Initializing....(May take 3 seconds)"));
+
+  fonaSerial->begin(4800);
+  if (! fona.begin(*fonaSerial)) {
+    Serial.println(F("Couldn't find A.T.A.S SIM800L Module"));
+    while (1);
+  }
+  
+  // Print module IMEI number.
+  Serial.println(F("Test SIM - retrieve IMEI number")); 
+  char imei[16] = {0}; // MUST use a 16 character buffer for IMEI!
+  uint8_t imeiLen = fona.getIMEI(imei);
+  if (imeiLen > 0) {
+    Serial.print("Module IMEI: "); Serial.println(imei);
+  }
+
+  Serial.println(F("Test ESP32 - Connect to WIFI"));
+  WiFi.begin(ssid,password);
+  Serial.write("Connecting to wifi");
+//  while(WiFi.status() != WL_CONNECTED){
+//    WiFi.begin(ssid,password);
+//    Serial.print(".");
+//    delay(500);
+//  } 
+  Serial.println("\n Connected to Wifi");
+  Serial.print("IP address is");
+  Serial.println(WiFi.localIP());
+  Serial.println(F("Successfully connected to the wifi"));
+  
+  delay(5000);
+  Serial.println("ATAS system is ready");
+  Serial.println("-------------------------------------------------");
+}
+
+void loop() {
+//  while (! Serial.available() ) {
+//    if (fona.available()) {
+//      Serial.write(fona.read());
+//    }
+//  }
+
+  // Look for incoming messages and actions
+  
+
+  // Look for any sensors triggered
+  triggermain = 1;
+  sensorTriggered();
+
+  // Do actions when sensors triggered
+  // SendSMS and Calls in sequence
+
+  
+  // flush input
+  flushSerial();
+  while (fona.available()) {
+    Serial.write(fona.read());
+  }
+delay(5000);
+}
+
+void sensorTriggered(){
+  String msg = "";
+  Serial.println("Warning: Sensor has been triggered");
+  Serial.println("Triggermain has been set to 1");
+  int iterator;
+  for(iterator=0; iterator<= 11;iterator++){
+    Serial.print("Contacting User # ");
+    Serial.println(iterator);
+    Serial.println("Please wait....");
+    delay(2000);
+    if(numbersActive[iterator] == 1){
+      Serial.print("User ");
+      Serial.print(iterator);
+      Serial.println(" is active.");
+      
+      if(triggermain == 1){
+        Serial.print("Sending SMS: User # " );
+        Serial.println(iterator);
+        boolean statusOfSMS = sendSMS(number0, msg1); // Send SMS
+        delay(3000);
+        msg = "Calling: User # " + iterator;
+        Serial.println(msg);
+        makeCall(number0); // Make Call
+      }
+    }
+    delay(5000);
+  }
+}
+
+void makeCall(String number){
+  while(true){
+    if(! checkIfReadyForCall()){
+      delay(500);
+      continue;
+    }
+    boolean madeACall = makeACall(number);
+    if(! madeACall) {
+      Serial.println("Call could not be made, retrying...");
+      delay(2000);
+      fona.hangUp();
+      delay(2000);
+      continue;
+    }
+
+    int8_t callstat = fona.getCallStatus();
+      if(callstat == 4){
+        boolean result = checkIfCallPickedUp();
+        if(result){
+          triggermain = 0;
+        }
+         break;
+      }else if(callstat == 5){
+        fona.hangUp();
+        Serial.println("Retrying the same number " + number0 + " again as previous call could not be completed");
+        delay(5000);
+        continue;
+      }
+    }
+}
+
+boolean checkIfCallPickedUp(){
+  flushSerial();
+  while(true){
+    char readBuffer[180];
+    int i = 0;
+    fonaSerial->write("AT+CLCC\r\n");
+    while (fona.available() > 0) {
+      byte x = fona.read();
+      if (x != 0x04)                 //0x04 code to mark the end of Text message
+      {
+         readBuffer[i] = x;
+         i++;
+      }
+      else
+      {
+         i = 0;
+      }                                          
+    }
+    Serial.println(readBuffer);
+    if(strlen(readBuffer) == 0) { delay(500); continue; }
+    String result;
+    result = String(result + parseInformation(readBuffer));
+    Serial.println(result.length());
+    Serial.println(result);
+     if (result.length()==0 || result.isEmpty()) { 
+      Serial.println("Unknown");
+     }
+     if(isSpace(result.toInt())){
+      Serial.println("Call not attended");
+     }
+   Serial.println(result.toInt());
+    switch(result.toInt()){
+      case 0:
+        Serial.println("Call has been attended");
+        /*
+          1. Play the audio
+          2. Check if still phone picked up
+          3. Repeat audio again
+          4. Set the trigger to 0
+        */
+        break;
+      case 1:
+        Serial.println("Call could not be reached");
+        // Cut the call in 5 seconds
+        // Call the next person
+        numberToDial = numberToDial + 1;
+        break;
+      case 2:
+        Serial.println("Call not attended");
+        // Cut the call in 5 seconds
+        // Call the next person
+        break;
+      case 3:
+      Serial.println("Ringing...");
+        break;
+      default:
+        Serial.println("Unknown");
+        // Cut the call in 5 seconds
+        // Call the next person
+        break;
+    }
+    delay(2000);
+  }
+}
+
+/*
+ * 3 - Ringing
+ * 2 - Call not attended
+ * 0 - Called Attended
+ * 1 - Unreachable phone
+ * 
+ */
+char parseInformation(char str[]){
+
+  char delim = ',';
+  char splittedValuesTT[10];
+  splittedValuesTT[2] = 0;
+  
+  char* pch;
+  pch = strtok (str,",");
+  int i =0;
+  while (pch != NULL) { 
+     char tmp = *pch;
+     splittedValuesTT[i] = tmp;
+     pch = strtok(NULL, ","); 
+     i++;
+  } 
+  //Serial.println("--------------");
+  Serial.print("Status is --> "); Serial.println(splittedValuesTT[2]);
+  //Serial.println("--------------");
+  Serial.print("array length is --> "); Serial.println();
+  Serial.println("--------------");
+  if(strlen(splittedValuesTT) < 3){
+    Serial.println("Empty recorded");
+    return '2';
+  }
+  
+  return splittedValuesTT[2];
+}
+
+boolean makeACall(String number){
+  char sendto[11];
+  number.toCharArray(sendto, 11);
+  if (!fona.callPhone(sendto)) {
+    Serial.println(F("Failed"));
+    return false;
+  } else {
+    Serial.println(F("Sent!"));
+    return true;
+  }
+}
+
+int8_t callStatus(){
+  int8_t callstat = fona.getCallStatus();
+  return callstat;
+}
+
+boolean checkIfReadyForCall(){
+  int8_t callstat = fona.getCallStatus();
+  if(callstat == 0){
+    return true;
+  }else if (callstat == 1){
+    return false;
+  }
+}
+
+boolean repeatPlayAudio(){
+  
+}
+
+boolean sendSMS(String number, String msg){
+  flushSerial();
+  int retried = 0;
+  
+  while(true){
+    char sendto[11], message[1000];
+    number.toCharArray(sendto, 11);
+    for(int i=0; i<=msg.length();i++){
+      message[i] = msg[i];
+    }
+    
+    boolean result = fona.sendSMS(sendto, message);
+    Serial.println("Message status >> " + result);
+    Serial.println("Message sent successfully to " + msg);
+    delay(5000);
+    break;
+  }
+  // Check if message sent status
+  return true;
+}
+
+void flushSerial() {
+  while (Serial.available())
+    Serial.read();
+}
+
+char readBlocking() {
+  while (!Serial.available());
+  return Serial.read();
+}
+uint16_t readnumber() {
+  uint16_t x = 0;
+  char c;
+  while (! isdigit(c = readBlocking())) {
+    //Serial.print(c);
+  }
+  Serial.print(c);
+  x = c - '0';
+  while (isdigit(c = readBlocking())) {
+    Serial.print(c);
+    x *= 10;
+    x += c - '0';
+  }
+  return x;
+}
+
+uint8_t readline(char *buff, uint8_t maxbuff, uint16_t timeout) {
+  uint16_t buffidx = 0;
+  boolean timeoutvalid = true;
+  if (timeout == 0) timeoutvalid = false;
+
+  while (true) {
+    if (buffidx > maxbuff) {
+      //Serial.println(F("SPACE"));
+      break;
+    }
+
+    while (Serial.available()) {
+      char c =  Serial.read();
+
+      //Serial.print(c, HEX); Serial.print("#"); Serial.println(c);
+
+      if (c == '\r') continue;
+      if (c == 0xA) {
+        if (buffidx == 0)   // the first 0x0A is ignored
+          continue;
+
+        timeout = 0;         // the second 0x0A is the end of the line
+        timeoutvalid = true;
+        break;
+      }
+      buff[buffidx] = c;
+      buffidx++;
+    }
+
+    if (timeoutvalid && timeout == 0) {
+      //Serial.println(F("TIMEOUT"));
+      break;
+    }
+    delay(1);
+  }
+  buff[buffidx] = 0;  // null term
+  return buffidx;
+}
