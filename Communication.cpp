@@ -70,11 +70,9 @@ bool Communication::beginSequence(){
     
   }else{
     Serial.println("Call has not been attended");
-
     if(currentNumber == 9){
       currentNumber = 0;
     }
-
     currentNumber = currentNumber + 1;
   }
   return result;

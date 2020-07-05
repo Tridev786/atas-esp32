@@ -10,6 +10,8 @@ class Core
 {
   public:
     Core();
+
+    
     
     bool checkInternet() { return wifi.checkConnection(); }
     String fetchIPAddress() { return wifi.fetchIPAddress(); }
@@ -34,17 +36,25 @@ class Core
       return false;
     }
 
+    void checkAndSetPrioritySensorTriggerStatus();
+
     void triggerFirstPrioritySensors() {
       stateMachine.updateStateMachine(3,0);
     }
+
+    void updatePIRStatus(char values[]);
     
   private:
     Wifi wifi;
     StateMachine stateMachine;
     Parameter parameter;
     Communication communication;
-
     bool initializeGSM();
+    float pir1=0.0; 
+    float pir2=0.0; 
+    float pir3=0.0; 
+    float pir4=0.0; 
+    float pir5=0.0;
 };
 
 #endif
