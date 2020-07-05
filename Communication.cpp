@@ -80,7 +80,9 @@ bool Communication::beginSequence(){
 
 bool Communication::contactUser(String fetchedNumber){
   delay(5000);
-  if(sendSms(fetchedNumber, parameter.fetchMsgForNumber(currentNumber))){
+  Serial.print("SensorTriggered: ");
+  Serial.println(sensorTriggered);
+  if(sendSms(fetchedNumber, parameter.fetchMsgForNumber(currentNumber, sensorTriggered))){
     Serial.println("SMS sent successfully!!");
   }else{
     Serial.println("SMS could not be sent!!");
@@ -88,14 +90,14 @@ bool Communication::contactUser(String fetchedNumber){
 
   if(parameter.checkIfSecondMsgRequired(currentNumber)){
     delay(5000);
-    if(sendSms(fetchedNumber, parameter.msg2)){
+    if(sendSms(fetchedNumber, parameter.msg1)){
       Serial.println("Address as SMS sent successfully!!");
     }else{
       Serial.println("Address as SMS could not be sent!!");
     }
 
     delay(5000);
-    if(sendSms(fetchedNumber, parameter.msg3)){
+    if(sendSms(fetchedNumber, parameter.msg2)){
       Serial.println("Location as SMS sent successfully!!");
     }else{
       Serial.println("Location as SMS could not be sent!!");
@@ -173,8 +175,6 @@ void Communication::flushSerial() {
   while (Serial.available())
     Serial.read();
 }
-
- 
 
 bool Communication::checkIfReadyForCall(){
   int8_t callstat = fona.getCallStatus();

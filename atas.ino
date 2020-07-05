@@ -56,7 +56,7 @@ void Task1code( void * pvParameters ){
           }
         }
       
-        if(commaCount == 4){
+        if(commaCount == 7){
           //Serial.println(bfr);
           core.updatePIRStatus(bfr);
         }

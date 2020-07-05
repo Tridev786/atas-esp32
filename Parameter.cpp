@@ -65,13 +65,20 @@ String Parameter::fetchNumber(int no){
       }
     }
 
-String Parameter::fetchMsgForNumber(int no){
-      if(no == 0 || no == 1 || no == 4 || no == 5 || no == 6){
-        return msg4;
-      }else {
-        return msg1;
-      }
-    }
+String Parameter::fetchMsgForNumber(int no, int type){
+  String msgType = "";
+  if(type == 4){
+    msgType = alert_types[type];
+  }else{
+    msgType = "Warning " + alert_types[type];
+  }
+  
+  if(no == 0 || no == 1 || no == 4 || no == 5 || no == 6){
+    return template_part1 +  msgType + template_part2;
+  }else {
+    return template_part1 +  msgType;
+  }
+}
 
 bool Parameter::checkIfSecondMsgRequired(int no){
 

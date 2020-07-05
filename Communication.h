@@ -11,6 +11,9 @@ class Communication
     uint8_t getIMEINumber();
     uint8_t getNetworkStatus();
     bool beginSequence();
+    void setSensorTriggeredStatus(int sensor){
+      sensorTriggered = sensor;
+    }
     
   private:
 
@@ -30,6 +33,7 @@ class Communication
     void flushSerial();
     uint8_t callStatus();
     bool contactUser(String fetchedNumber);
+    int sensorTriggered = 0;
 };
 
 #endif

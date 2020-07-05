@@ -61,29 +61,62 @@ void Core::updatePIRStatus(char values[]){
   buf5[2]=values[22];
   buf5[3]=values[23];
   pir5 = atof(buf5);
+
+  char buf11[4];
+  buf11[0]=values[25];
+  buf11[1]=values[26];
+  buf11[2]=values[27];
+  buf11[3]=values[28];
+  pir11 = atof(buf11);
+
+  char buf12[4];
+  buf12[0]=values[30];
+  buf12[1]=values[31];
+  buf12[2]=values[32];
+  buf12[3]=values[33];
+  pir12 = atof(buf12);
+
+  char buf13[4];
+  buf13[0]=values[35];
+  buf13[1]=values[36];
+  buf13[2]=values[37];
+  buf13[3]=values[38];
+  pir13 = atof(buf13);
 }
 
 void Core::checkAndSetPrioritySensorTriggerStatus(){
   if(pir1>=4.9){
     Serial.println("Priority 1 sensor triggered");
     triggerFirstPrioritySensors();
-    pir1 = 0.0;
+    lastTiggeredSensor = 1;
   }else if(pir2>=4.9){
     Serial.println("Priority 2 sensor triggered");
     triggerFirstPrioritySensors();
-    pir2 = 0.0;
+    lastTiggeredSensor = 1;
   }else if(pir3>=4.9){
     Serial.println("Priority 3 sensor triggered");
     triggerFirstPrioritySensors();
-    pir3 = 0.0;
+    lastTiggeredSensor = 1;
   }else if(pir4>=4.9){
     Serial.println("Priority 4 sensor triggered");
     triggerFirstPrioritySensors();
-    pir4 = 0.0;
+    lastTiggeredSensor = 1;
   }else if(pir5>=4.9){
     Serial.println("Priority 5 sensor triggered");
     triggerFirstPrioritySensors();
-    pir5 = 0.0;
+    lastTiggeredSensor = 1;
+  }else if(pir11>=4.9){
+    Serial.println("Fire sensor triggered");
+    triggerFirstPrioritySensors();
+    lastTiggeredSensor = 2;
+  }else if(pir12>=4.9){
+    Serial.println("Alert sensor triggered");
+    triggerFirstPrioritySensors();
+    lastTiggeredSensor = 3;
+  }else if(pir13>=4.9){
+    Serial.println("Emergency help sensor triggered");
+    triggerFirstPrioritySensors();
+    lastTiggeredSensor = 4;
   }
 }
 
@@ -138,6 +171,7 @@ void Core::stateMachineInitialize(){
       stateMachine.updateStateMachine(3,1);
     } else if(state == 1){
       // Begin sequence
+      communication.setSensorTriggeredStatus(lastTiggeredSensor);
       bool result = communication.beginSequence();
       if(result){
         stateMachine.updateStateMachine(4,0);

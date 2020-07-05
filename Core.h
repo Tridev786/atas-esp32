@@ -55,6 +55,11 @@ class Core
     float pir3=0.0; 
     float pir4=0.0; 
     float pir5=0.0;
+    float pir11=0.0; 
+    float pir12=0.0; 
+    float pir13=0.0;
+
+    int lastTiggeredSensor = 0;
 };
 
 #endif
