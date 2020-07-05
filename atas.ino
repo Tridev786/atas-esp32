@@ -62,65 +62,29 @@ void Task1code( void * pvParameters ){
 void loop() {
   core.stateMachineInitialize();
   
-  if(! core.checkSystemInitializationStatus()){
-    return;
-  }
+  if(core.checkSystemInitializationStatus()){
     
-    Serial.println("Waiting for any trigger!!");
+  Serial.println("Waiting for any trigger!!");
 
-    int commaCount = 0;
-    if (Serial2.available() > 0) {
-       char bfr[501];
-       memset(bfr,0, 501);
-       Serial2.readBytesUntil( '\n',bfr,500);
-  
-       for(int i =0; i<=sizeof(bfr); i++){
-          if(bfr[i] == ','){
-            commaCount = commaCount + 1;
-          }
+  int commaCount = 0;
+  if (Serial2.available() > 0) {
+     char bfr[501];
+     memset(bfr,0, 501);
+     Serial2.readBytesUntil( '\n',bfr,500);
+
+     for(int i =0; i<=sizeof(bfr); i++){
+        if(bfr[i] == ','){
+          commaCount = commaCount + 1;
         }
-      
-        if(commaCount == 4){
-          Serial.println("<< Data Recieved ");
-          Serial.println(bfr);
-       }
-    }
+      }
     
-//    int ADC_VALUE = analogRead(PIR_1);
-//    int voltage_value = (ADC_VALUE * 3.3 ) / (4095);
-//    if(voltage_value > 2.5){
-//      Serial.println("Trigger on PIR 1");
-//      core.updateStateMachine(2,0);
-//    }
-//  
-//    ADC_VALUE = analogRead(PIR_2);
-//    voltage_value = (ADC_VALUE * 3.3 ) / (4095);
-//    if(voltage_value > 2.5){
-//      Serial.println("Trigger on PIR 2");
-//      core.updateStateMachine(2,0);
-//    }
-//  
-//    ADC_VALUE = analogRead(PIR_3);
-//    voltage_value = (ADC_VALUE * 3.3 ) / (4095);
-//    if(voltage_value > 2.5){
-//      Serial.println("Trigger on PIR 3");
-//      core.updateStateMachine(2,0);
-//    }
-//  
-//    ADC_VALUE = analogRead(PIR_4);
-//    voltage_value = (ADC_VALUE * 3.3 ) / (4095);
-//    if(voltage_value > 2.5){
-//      Serial.println("Trigger on PIR 4");
-//      core.updateStateMachine(2,0);
-//    }
-//  
-//    ADC_VALUE = analogRead(PIR_5);
-//    voltage_value = (ADC_VALUE * 3.3 ) / (4095);
-//    if(voltage_value > 2.5){
-//      Serial.println("Trigger on PIR 5");
-//      core.updateStateMachine(2,0);
-//    }
+      if(commaCount == 4){
+        Serial.println("<< Data Recieved ");
+        Serial.println(bfr);
+      }
+  }
+  }
   
-  delay(2000);
+  delay(1000);
 }
 

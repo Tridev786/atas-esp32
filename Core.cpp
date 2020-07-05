@@ -86,7 +86,7 @@ void Core::stateMachineInitialize(){
    case 4: // dummy!!
     if(state == 0){ 
       Serial.println("State idle");
-      delay(2000);
+      //delay(2000);
     }
     break;
   }
