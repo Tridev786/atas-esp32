@@ -1,6 +1,5 @@
 #ifndef Parameter_h
 #define Parameter_h
-
 #include <EEPROM.h>
 
 class Parameter
@@ -20,7 +19,6 @@ class Parameter
     int intervalBtwnMsgToCall = 10 * 1000; // 10000 means 10 seconds 
 
     int doorOpenedSensitivity = 10 * 1000; // Time to wait before triggering the PIR sensor after closing the door
-    
     //String names[10] = {"Husband","Wife","Person3","Person4","Person5","Person6","Person7","Person8","Person9","Person10"};
     
     String msg1 = "Lalitha Jewellery\n\nNo: 48, South Masi Street, Madurai - 625001\n\nCurrent GPS Location - https://goo.gl/maps/J6BfHmt8xHeHr6P1A";

@@ -84,6 +84,16 @@ void Core::checkAndSetPrioritySensorTriggerStatus(){
     doorClosed = 1;
     lastDoorClosedTime = millis();
   }
+  
+  // 1 means door closed and 0 means door opened
+  if(doorClosed==1 && pir14=='0'){
+    doorClosed = 0; // Door has been opened
+  }
+
+  if(doorClosed==0 && pir14=='1'){
+    doorClosed = 1;
+    lastDoorClosedTime = millis();
+  }
 }
 
 void Core::stateMachineInitialize(){

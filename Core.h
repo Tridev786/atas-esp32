@@ -38,10 +38,6 @@ class Core
         Serial.println(F("Door is opened, PIR's not active!!"));
         return;
       }
-      Serial.print(F("activateAllSensors: "));
-      Serial.println(activateAllSensors);
-      Serial.print(F("lastTiggeredSensor: "));
-      Serial.println(lastTiggeredSensor);
       stateMachine.updateStateMachine(3,0);
     }
 
@@ -54,7 +50,6 @@ class Core
       
       unsigned long currentTime = millis();
       if (currentTime - lastDoorClosedTime >= parameter.doorOpenedSensitivity) {
-        Serial.println(F("All sensors reactived"));
         activateAllSensors == 1;
       }
     }
