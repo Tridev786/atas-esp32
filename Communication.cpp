@@ -1,4 +1,3 @@
-#include "Arduino.h"
 #include "Communication.h"
 #include <SoftwareSerial.h>
 #include "Adafruit_FONA.h"
@@ -27,7 +26,7 @@ uint8_t Communication::getIMEINumber(){
   char imei[16] = {0}; // MUST use a 16 character buffer for IMEI!
   uint8_t imeiLen = fona.getIMEI(imei);
   if (imeiLen > 0) {
-    Serial.print("Module IMEI: "); Serial.println(imei);
+    Serial.print(F("Module IMEI: ")); Serial.println(F(imei));
   }
   return imeiLen;
 }
@@ -47,29 +46,28 @@ uint8_t Communication::getNetworkStatus(){
 bool Communication::beginSequence(){
 
   // Msg first user
-  Serial.print("Current number is");
+  Serial.print(F("Current number is"));
   Serial.println(currentNumber);
-  String fetchedNumber = parameter.fetchNumber(currentNumber);
+  String fetchedNumber = parameter.fetchNumber(currentNumber, sensorTriggered);
 
   if(fetchedNumber == ""){
-    Serial.print("Next number is inactive: ");
+    Serial.print(F("Next number is inactive: "));
     Serial.print(currentNumber);
-    Serial.print(" , skipping to the next number: ");
+    Serial.print(F(" , skipping to the next number: "));
     currentNumber = currentNumber + 1;
     Serial.println(currentNumber);
     return false;
   }
   
-  Serial.print("Fetched number is: ");
+  Serial.print(F("Fetched number is: "));
   Serial.println(fetchedNumber);
   bool result = contactUser(fetchedNumber);
 
-  if(result == true){
-    Serial.println("Call has been attended");
+  if(result){
+    Serial.println(F("Call has been attended"));
     currentNumber = 0;
-    
   }else{
-    Serial.println("Call has not been attended");
+    Serial.println(F("Call has not been attended"));
     if(currentNumber == 9){
       currentNumber = 0;
     }
@@ -80,27 +78,33 @@ bool Communication::beginSequence(){
 
 bool Communication::contactUser(String fetchedNumber){
   delay(5000);
-  Serial.print("SensorTriggered: ");
-  Serial.println(sensorTriggered);
   if(sendSms(fetchedNumber, parameter.fetchMsgForNumber(currentNumber, sensorTriggered))){
-    Serial.println("SMS sent successfully!!");
+    Serial.println(F("SMS sent successfully!!"));
   }else{
-    Serial.println("SMS could not be sent!!");
+    Serial.println(F("SMS could not be sent!!"));
   }
 
   if(parameter.checkIfSecondMsgRequired(currentNumber)){
     delay(5000);
     if(sendSms(fetchedNumber, parameter.msg1)){
-      Serial.println("Address as SMS sent successfully!!");
+      Serial.println(F("Address sent!!"));
     }else{
-      Serial.println("Address as SMS could not be sent!!");
+      Serial.println(F("Address not sent!!"));
     }
 
     delay(5000);
-    if(sendSms(fetchedNumber, parameter.msg2)){
-      Serial.println("Location as SMS sent successfully!!");
+    if(sensorTriggered == 2){
+      if(sendSms(fetchedNumber, parameter.msg3)){
+      Serial.println(F("Location sent!!"));
+      }else{
+        Serial.println(F("Location not sent!!"));
+      }
     }else{
-      Serial.println("Location as SMS could not be sent!!");
+      if(sendSms(fetchedNumber, parameter.msg2)){
+      Serial.println(F("Location sent!!"));
+      }else{
+        Serial.println(F("Location not sent!!"));
+      }
     }
   }
   
@@ -108,7 +112,7 @@ bool Communication::contactUser(String fetchedNumber){
   
   bool callStat = makeCall(fetchedNumber);
    if(callStat) {
-      Serial.println("Call could not be made. Trying to reconnect to the same caller.");
+      Serial.println(F("Call could not be made. Trying to reconnect to the same caller."));
    }
 
    return callStat;
@@ -133,15 +137,15 @@ bool Communication::makeCall(String fetchedNumber){
   char callto[21];
   fetchedNumber.toCharArray(callto, 20);
 
-  while(true){
-    if(! checkIfReadyForCall()){
-      Serial.println("GSM not ready for the call..Please wait...");
-      delay(500); 
-      continue;
-    }
-    Serial.println("GSM is ready for the call...");
-    break;
-  }
+//  while(true){
+//    if(! checkIfReadyForCall()){
+//      Serial.println(F("GSM not ready for the call..Please wait..."));
+//      delay(500); 
+//      continue;
+//    }
+//    Serial.println(F("GSM is ready for the call..."));
+//    break;
+//  }
 
   long currentTime = millis();
   bool callStatus = true;
@@ -149,18 +153,16 @@ bool Communication::makeCall(String fetchedNumber){
 
     long latestTime = millis();
     if(latestTime-currentTime >= parameter.durationToAttempt){
-      Serial.println("Time has expired");
-      Serial.println(parameter.durationToAttempt);
       callStatus = false;
       break;
     }
     
     if(! fona.callPhone(callto)){
       delay(500);
-      Serial.println("Call failed...");
+      Serial.println(F("Call failed..."));
       continue;
     }
-    Serial.println("Call success...");
+    Serial.println(F("Call success..."));
     break;
   }
 
@@ -206,23 +208,23 @@ bool Communication::checkIfCallPickedUp(){
          i = 0;
       }                                          
     }
-    Serial.println(readBuffer);
+    //Serial.println(readBuffer);
     if(strlen(readBuffer) == 0) { delay(500); continue; }
     String result;
     result = String(result + parseInformation(readBuffer));
-    Serial.println(result.length());
-    Serial.println(result);
+    //Serial.println(result.length());
+    //Serial.println(result);
      if (result.length()==0 ) { 
-      Serial.println("Unknown");
+      Serial.println(F("Unknown"));
      }
      if(isSpace(result.toInt())){
-      Serial.println("Call not attended");
+      Serial.println(F("Call not attended"));
      }
-   Serial.println(result.toInt());
+   //Serial.println(result.toInt());
    
     switch(result.toInt()){
       case 0:
-        Serial.println("Call has been attended");
+        Serial.println(F("Call has been attended"));
         /*
           1. Play the audio
           2. Check if still phone picked up
@@ -232,37 +234,42 @@ bool Communication::checkIfCallPickedUp(){
         checkIfCallAttended = 2;
         break;
       case 1:
-        Serial.println("Call could not be reached");
+        Serial.println(F("Call could not be reached"));
         // Cut the call in 5 seconds
         // Call the next person
         //numberToDial = numberToDial + 1;
         break;
       case 2:
-        Serial.println("Call not attended");
+        Serial.println(F("Call not attended"));
         // Cut the call in 5 seconds
         // Call the next person
         if(checkIfCallAttended == 2){
           checkIfCallAttended = 3;
+          break;
         }
 
         if(count >= 40){
+          Serial.println(F("here"));
           checkIfCallAttended = 0;
         }
         
         break;
       case 3:
-      Serial.println("Ringing...");
+      Serial.println(F("Ringing..."));
         checkIfCallAttended = 1;
         break;
       default:
-        Serial.println("Unknown");
+        Serial.println(F("Unknown"));
         // Cut the call in 5 seconds
         // Call the next person
-        Serial.println("Status unknown");
+        Serial.println(F("Status unknown"));
         break;
     }
     
     delay(1000);
+
+    Serial.print("Count is: ");
+    Serial.println(count);
 
     if(count >= 40 && checkIfCallAttended == 0){
       Serial.print("Count is: ");
@@ -272,7 +279,7 @@ bool Communication::checkIfCallPickedUp(){
 
    count = count + 1;
     if(checkIfCallAttended == 3){
-      Serial.println("Call has been attended and cut...");
+      Serial.println(F("Call has been attended and cut..."));
       return true;
     }
   }
@@ -301,15 +308,16 @@ char Communication::parseInformation(char str[]){
      i++;
   } 
   //Serial.println("--------------");
-  Serial.print("Status is --> "); Serial.println(splittedValuesTT[2]);
+  //Serial.print("Status is --> "); Serial.println(splittedValuesTT[2]);
   //Serial.println("--------------");
-  Serial.print("array length is --> "); Serial.println();
-  Serial.println("--------------");
+  //Serial.print("array length is --> "); Serial.println();
+  //Serial.println("--------------");
   if(strlen(splittedValuesTT) < 3){
-    Serial.println("Empty recorded");
+    Serial.println(F("Empty recorded"));
     return '2';
   }
   
   return splittedValuesTT[2];
 }
+
 

@@ -62,3 +62,4 @@ String Wifi::IpAddress2String(IPAddress ipAddress)
   String(ipAddress[2]) + String(".") +\
   String(ipAddress[3])  ; 
 }
+

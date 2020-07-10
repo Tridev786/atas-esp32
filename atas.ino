@@ -12,7 +12,7 @@
 #define RX2 16
 
 Core core;
-const long cloudDataInterval = 500;
+const long cloudDataInterval = 2000;
 TaskHandle_t Task1;
 int firstTime = 0;
 
@@ -56,7 +56,7 @@ void Task1code( void * pvParameters ){
           }
         }
       
-        if(commaCount == 7){
+        if(commaCount == 8){
           //Serial.println(bfr);
           core.updatePIRStatus(bfr);
         }
@@ -74,7 +74,9 @@ void loop() {
   if(core.checkSystemInitializationStatus()){
     core.checkAndSetPrioritySensorTriggerStatus();
   }
+  core.updateDoorClosedStatus();
   core.stateMachineInitialize();
   delay(1000);
 }
+
 
