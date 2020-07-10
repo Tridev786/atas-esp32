@@ -1,4 +1,3 @@
-#include "Arduino.h"
 #include "Core.h"
 #include "Wifi.h"
 #include "StateMachine.h"
@@ -15,7 +14,7 @@ bool Core::initializeGSM(){
   bool result = true;
   
   if(! communication.setupGSMModule()){
-    Serial.println("GSM setup has failed!! ");
+    Serial.println(F("GSM setup has failed!! "));
     result = false;
   }
 
@@ -27,96 +26,60 @@ bool Core::initializeGSM(){
 }
 
 void Core::updatePIRStatus(char values[]){
-  char buf1[4];
-  buf1[0]=values[0];
-  buf1[1]=values[1];
-  buf1[2]=values[2];
-  buf1[3]=values[3];
-  pir1 = atof(buf1);
 
-  char buf2[4];
-  buf2[0]=values[5];
-  buf2[1]=values[6];
-  buf2[2]=values[7];
-  buf2[3]=values[8];
-  pir2 = atof(buf2);
-
-  char buf3[4];
-  buf3[0]=values[10];
-  buf3[1]=values[11];
-  buf3[2]=values[12];
-  buf3[3]=values[13];
-  pir3 = atof(buf3);
-
-  char buf4[4];
-  buf4[0]=values[15];
-  buf4[1]=values[16];
-  buf4[2]=values[17];
-  buf4[3]=values[18];
-  pir4 = atof(buf4);
-
-  char buf5[4];
-  buf5[0]=values[20];
-  buf5[1]=values[21];
-  buf5[2]=values[22];
-  buf5[3]=values[23];
-  pir5 = atof(buf5);
-
-  char buf11[4];
-  buf11[0]=values[25];
-  buf11[1]=values[26];
-  buf11[2]=values[27];
-  buf11[3]=values[28];
-  pir11 = atof(buf11);
-
-  char buf12[4];
-  buf12[0]=values[30];
-  buf12[1]=values[31];
-  buf12[2]=values[32];
-  buf12[3]=values[33];
-  pir12 = atof(buf12);
-
-  char buf13[4];
-  buf13[0]=values[35];
-  buf13[1]=values[36];
-  buf13[2]=values[37];
-  buf13[3]=values[38];
-  pir13 = atof(buf13);
+  pir1 = values[0];
+  pir2 = values[2];
+  pir3 = values[4];
+  pir4 = values[6];
+  pir5 = values[8];
+  pir11 = values[10];
+  pir12 = values[12];
+  pir13 = values[14];
 }
 
 void Core::checkAndSetPrioritySensorTriggerStatus(){
-  if(pir1>=4.9){
-    Serial.println("Priority 1 sensor triggered");
+  if(pir1=='1'){
+    Serial.println(F("Priority 1 sensor triggered"));
     triggerFirstPrioritySensors();
     lastTiggeredSensor = 1;
-  }else if(pir2>=4.9){
-    Serial.println("Priority 2 sensor triggered");
+  }else if(pir2=='1'){
+    Serial.println(F("Priority 2 sensor triggered"));
     triggerFirstPrioritySensors();
     lastTiggeredSensor = 1;
-  }else if(pir3>=4.9){
-    Serial.println("Priority 3 sensor triggered");
+  }else if(pir3=='1'){
+    Serial.println(F("Priority 3 sensor triggered"));
     triggerFirstPrioritySensors();
     lastTiggeredSensor = 1;
-  }else if(pir4>=4.9){
-    Serial.println("Priority 4 sensor triggered");
+  }else if(pir4=='1'){
+    Serial.println(F("Priority 4 sensor triggered"));
     triggerFirstPrioritySensors();
     lastTiggeredSensor = 1;
-  }else if(pir5>=4.9){
-    Serial.println("Priority 5 sensor triggered");
+  }else if(pir5=='1'){
+    Serial.println(F("Priority 5 sensor triggered"));
     triggerFirstPrioritySensors();
     lastTiggeredSensor = 1;
-  }else if(pir11>=4.9){
-    Serial.println("Fire sensor triggered");
+  }else if(pir11=='1'){
+    Serial.println(F("Fire sensor triggered"));
     triggerFirstPrioritySensors();
     lastTiggeredSensor = 2;
-  }else if(pir12>=4.9){
-    Serial.println("Alert sensor triggered");
+  }else if(pir12=='1'){
+    Serial.println(F("Alert sensor triggered"));
     triggerFirstPrioritySensors();
     lastTiggeredSensor = 3;
-  }else if(pir13>=4.9){
-    Serial.println("Emergency help sensor triggered");
+  }else if(pir13=='1'){
+    Serial.println(F("Emergency help sensor triggered"));
     triggerFirstPrioritySensors();
     lastTiggeredSensor = 4;
+  }
+  
+  // 1 means door closed and 0 means door opened
+  if(doorClosed==1 && pir14=='0'){
+    doorClosed = 0; // Door has been opened
+  }
+
+  if(doorClosed==0 && pir14=='1'){
+    doorClosed = 1;
+    lastDoorClosedTime = millis();
   }
 }
 
@@ -149,24 +112,20 @@ void Core::stateMachineInitialize(){
     } else if(state == 1){
       uint8_t statusOfNetwork = communication.getNetworkStatus();
       if(statusOfNetwork == 1 || statusOfNetwork == 5){
-        Serial.print("statusOfNetwork: ");
-        Serial.println(statusOfNetwork);
-        Serial.println("Network connected");
+        Serial.println(F("Network connected"));
         stateMachine.updateStateMachine(2,0);
       }else{
-        Serial.print("Waiting for network connection...Status: ");
-        Serial.println(statusOfNetwork);
+        Serial.println(F("Not connected: "));
       }
     }
     break;
    case 2:
     if(state == 0){ 
-      Serial.println("All set...waiting...");
       delay(2000);
       stateMachine.updateStateMachine(3,0);
     }
     break;
-   case 3: // 3. First priority sensors triggered
+   case 3: // First priority sensors triggered
     if(state == 0){ 
       stateMachine.updateStateMachine(3,1);
     } else if(state == 1){
@@ -186,4 +145,5 @@ void Core::stateMachineInitialize(){
     break;
   }
 }
+
 

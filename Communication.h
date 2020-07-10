@@ -1,6 +1,5 @@
 #ifndef Communication_h
 #define Communication_h
-#include "Arduino.h"
 #include "Parameter.h"
 
 class Communication
@@ -37,3 +36,4 @@ class Communication
 };
 
 #endif
+

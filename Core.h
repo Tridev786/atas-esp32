@@ -22,7 +22,7 @@ class Core
       uint8_t state = stateMachine.getState();
         
       if(action == 4 && state == 0){
-        Serial.println("State machine set for sending msgs and calls...!! ");
+        //Serial.println("State machine set for sending msgs and calls...!! ");
         stateMachine.updateStateMachine(_action, _state);
       }
     }
@@ -30,16 +30,29 @@ class Core
     bool checkSystemInitializationStatus(){
       uint8_t action = stateMachine.getAction();
       uint8_t state = stateMachine.getState();
-
       if(action == 4 && state == 0) return true;
-
       return false;
     }
 
     void checkAndSetPrioritySensorTriggerStatus();
 
     void triggerFirstPrioritySensors() {
+      if(activateAllSensors == 0 && lastTiggeredSensor==1){
+        return;
+      }
       stateMachine.updateStateMachine(3,0);
+    }
+
+    void updateDoorClosedStatus(){
+
+      if(doorClosed == 0){
+        return;
+      }
+      
+      unsigned long currentTime = millis();
+      if (currentTime - lastDoorClosedTime >= parameter.doorOpenedSensitivity) {
+        activateAllSensors == 1;
+      }
     }
 
     void updatePIRStatus(char values[]);
@@ -50,17 +63,22 @@ class Core
     Parameter parameter;
     Communication communication;
     bool initializeGSM();
-    float pir1=0.0; 
-    float pir2=0.0; 
-    float pir3=0.0; 
-    float pir4=0.0; 
-    float pir5=0.0;
-    float pir11=0.0; 
-    float pir12=0.0; 
-    float pir13=0.0;
+    byte pir1=0; 
+    byte pir2=0; 
+    byte pir3=0; 
+    byte pir4=0; 
+    byte pir5=0;
+    byte pir11=0; 
+    byte pir12=0; 
+    byte pir13=0;
+    byte pir14=0;
 
+    byte doorClosed=1;
+    byte activateAllSensors = 1;
+    unsigned long lastDoorClosedTime;
     int lastTiggeredSensor = 0;
 };
 
 #endif
   
+
