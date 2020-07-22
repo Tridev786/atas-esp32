@@ -50,7 +50,7 @@ class Core
       
       unsigned long currentTime = millis();
       if (currentTime - lastDoorClosedTime >= parameter.doorOpenedSensitivity) {
-        activateAllSensors == 1;
+        activateAllSensors = 1;
       }
     }
 
@@ -71,6 +71,7 @@ class Core
     byte pir12=0; 
     byte pir13=0;
     byte pir14=0;
+    byte pir15=0;
 
     byte doorClosed=1;
     byte activateAllSensors = 1;

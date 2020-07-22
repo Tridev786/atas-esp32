@@ -9,7 +9,7 @@ class Parameter
     String password = "Dharshinisri";
     const static int secPriorityCount = 5;
     
-    int numbersActive[10] = {1,1,0,1,1,1,1,1,1,1};
+    int numbersActive[10] = {1,1,1,0,1,1,1,1,1,1};
     int secondPriorityNumbers[secPriorityCount] = {2,3,7,8,9}; // Send address and Location to police and fire station
 
     int thirdPriorityNumbers[10] = {1,1,0,1,1,1,1,0,0,1}; // Fire station conditions
@@ -18,7 +18,7 @@ class Parameter
     int numberToDial = 0;
     int intervalBtwnMsgToCall = 10 * 1000; // 10000 means 10 seconds 
 
-    int doorOpenedSensitivity = 10 * 1000; // Time to wait before triggering the PIR sensor after closing the door
+    int doorOpenedSensitivity = 20 * 1000; // Time to wait before triggering the PIR sensor after closing the door
     //String names[10] = {"Husband","Wife","Person3","Person4","Person5","Person6","Person7","Person8","Person9","Person10"};
     
     String msg1 = "Lalitha Jewellery\n\nNo: 48, South Masi Street, Madurai - 625001\n\nCurrent GPS Location - https://goo.gl/maps/J6BfHmt8xHeHr6P1A";
@@ -47,6 +47,8 @@ class Parameter
     String number7 = "9715904917";
     String number8 = "9715904917";
     String number9 = "9715904917";
+
+    // 0,1,4,5,6
 };
 
 #endif

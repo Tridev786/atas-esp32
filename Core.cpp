@@ -36,6 +36,7 @@ void Core::updatePIRStatus(char values[]){
   pir12 = values[12];
   pir13 = values[14];
   pir14 = values[16];
+  pir15 = values[18];
 }
 
 void Core::checkAndSetPrioritySensorTriggerStatus(){
@@ -70,6 +71,10 @@ void Core::checkAndSetPrioritySensorTriggerStatus(){
   }else if(pir13=='1'){
     Serial.println(F("Emergency help sensor triggered"));
     lastTiggeredSensor = 4;
+    triggerFirstPrioritySensors();
+  }else if(pir15=='0'){
+    Serial.println(F("Main door broken triggered"));
+    lastTiggeredSensor = 0;
     triggerFirstPrioritySensors();
   }
   // 1 means door closed and 0 means door opened
