@@ -16,9 +16,9 @@ class Parameter
     int durationToAttempt = 10000; //10 seconds is the maximum time to try a number
     int numberOfAttempts = 2;
     int numberToDial = 0;
-    int intervalBtwnMsgToCall = 10 * 1000; // 10000 means 10 seconds 
+    int intervalBtwnMsgToCall = 20 * 1000; // 10000 means 10 seconds 
 
-    int doorOpenedSensitivity = 20 * 1000; // Time to wait before triggering the PIR sensor after closing the door
+    int doorOpenedSensitivity = 15 * 1000; // Time to wait before triggering the PIR sensor after closing the door
     //String names[10] = {"Husband","Wife","Person3","Person4","Person5","Person6","Person7","Person8","Person9","Person10"};
     
     String msg1 = "Lalitha Jewellery\n\nNo: 48, South Masi Street, Madurai - 625001\n\nCurrent GPS Location - https://goo.gl/maps/J6BfHmt8xHeHr6P1A";

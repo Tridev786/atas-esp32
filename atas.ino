@@ -69,7 +69,6 @@ void Task1code( void * pvParameters ){
   }
 }
 
-
 void loop() {
   if(core.checkSystemInitializationStatus()){
     core.checkAndSetPrioritySensorTriggerStatus();
@@ -78,5 +77,3 @@ void loop() {
   core.stateMachineInitialize();
   delay(1000);
 }
-
-
