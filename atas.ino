@@ -19,6 +19,8 @@ int firstTime = 0;
 void setup() 
 {
   Serial.begin(57600);
+  Wire.begin(); // start 2-wire communication
+  Wire.setClock(400000L);
   Serial2.begin(19200, SERIAL_8N1, RX2, TX2);
 
   xTaskCreatePinnedToCore(

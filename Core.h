@@ -5,6 +5,7 @@
 #include "StateMachine.h"
 #include "Parameter.h"
 #include "Communication.h"
+#include "Display.h"
 
 class Core
 {
@@ -61,6 +62,7 @@ class Core
     StateMachine stateMachine;
     Parameter parameter;
     Communication communication;
+    Display displayController;
     bool initializeGSM();
     byte pir1=0; 
     byte pir2=0; 

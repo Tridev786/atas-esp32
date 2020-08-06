@@ -3,9 +3,12 @@
 #include "StateMachine.h"
 #include "Parameter.h"
 #include "Communication.h"
+#include "Display.h"
 
 Core::Core(){
   wifi = Wifi();
+  displayController = Display();
+  displayController.lcdInitialize();
   stateMachine = StateMachine();
   stateMachine.updateStateMachine(0, 0);
 }
