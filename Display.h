@@ -9,33 +9,16 @@
 class Display
 {
   public:
-
-    hd44780_I2Cexp lcd;
-    
     Display();
-    
-    void lcdInitialize(){
-      lcd.begin(20, 4); //20 columns and 4 rows
-      lcd.init();
-      lcd.backlight();
-    }
-
-    void displaySimpleChars(){
-      lcd.setCursor(0, 0);
-      // print message
-      lcd.print("   P.Dharshinisri  ");
-      delay(1000);
-      // clears the display to print new message
-      lcd.clear();
-      // set cursor to first column, second row
-      lcd.setCursor(0,1);
-      lcd.print("  P.Tridev Vishkan      Version : 9.1");
-      delay(1000);
-      lcd.clear(); 
-    }
-
+    void lcdInitialize();
+    void displayFirstLine(String data);
+    void displaySecondLine(String data);
+    void displayThirdLine(String data);
+    void displayFourthLine(String data);
+    void setDisplayPosition(int row, int column, String data);
+    void clearAll() { lcd.clear(); }
   private:
-      
+    hd44780_I2Cexp lcd;
 };
 
 #endif

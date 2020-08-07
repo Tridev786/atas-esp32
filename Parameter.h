@@ -1,6 +1,7 @@
 #ifndef Parameter_h
 #define Parameter_h
 #include <EEPROM.h>
+#include "Display.h"
 
 class Parameter
 {
@@ -17,6 +18,7 @@ class Parameter
     int numberOfAttempts = 2;
     int numberToDial = 0;
     int intervalBtwnMsgToCall = 20 * 1000; // 10000 means 10 seconds 
+    int standByMsgInterval = 5 * 1000; // 10000 means 10 seconds 
 
     int doorOpenedSensitivity = 15 * 1000; // Time to wait before triggering the PIR sensor after closing the door
     //String names[10] = {"Husband","Wife","Person3","Person4","Person5","Person6","Person7","Person8","Person9","Person10"};
@@ -34,9 +36,36 @@ class Parameter
     String fetchNumber(int no, int type);
     String fetchMsgForNumber(int no, int type);
     bool checkIfSecondMsgRequired(int no);
+    void standByMsgs();
+    
+    void resetStandByMsg(){
+      standByMsgCounter = 0;
+    }
+
+    void resetDisplay(){
+      
+    }
+
+    void setupDisplay(){
+      displayController.lcdInitialize();
+      displayController.setDisplayPosition(0,1,"Safety Starts From");
+      displayController.setDisplayPosition(1,6,"A.T.A.S");
+      displayController.setDisplayPosition(2,0,"Please wait...");
+      displayController.setDisplayPosition(2,0,"System Initializing.");
+    }
+
+    void setupScreen(String message){
+      displayController.clearAll();
+      displayController.setDisplayPosition(0,1,"Safety Starts From");
+      displayController.setDisplayPosition(1,6,"A.T.A.S");
+      displayController.setDisplayPosition(2,0,"Please wait...");
+      displayController.setDisplayPosition(2,0,"message");
+    }
 
   private:
 
+    Display displayController;
+    
     String number0 = "9715904917";
     String number1 = "9715904917";
     String number2 = "9715904917";
@@ -47,8 +76,9 @@ class Parameter
     String number7 = "9715904917";
     String number8 = "9715904917";
     String number9 = "9715904917";
-
-    // 0,1,4,5,6
+    int standByMsgCounter = 0;
+    long displayResetTimer = 0;
+    void displayDefault(int displayValue);
 };
 
 #endif

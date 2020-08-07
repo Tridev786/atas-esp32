@@ -32,8 +32,6 @@ void setup()
     &Task1,      /* Task handle to keep track of created task */
     0);          /* pin task to core 0 */ 
   
-  //core.initializeComponents();
-  
   delay(500); 
 }
 
@@ -72,6 +70,7 @@ void Task1code( void * pvParameters ){
 }
 
 void loop() {
+
   if(core.checkSystemInitializationStatus()){
     core.checkAndSetPrioritySensorTriggerStatus();
   }

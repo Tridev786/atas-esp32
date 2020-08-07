@@ -3,12 +3,9 @@
 #include "StateMachine.h"
 #include "Parameter.h"
 #include "Communication.h"
-#include "Display.h"
 
 Core::Core(){
   wifi = Wifi();
-  displayController = Display();
-  displayController.lcdInitialize();
   stateMachine = StateMachine();
   stateMachine.updateStateMachine(0, 0);
 }
@@ -111,18 +108,24 @@ void Core::stateMachineInitialize(){
  switch(action){
   case 0: // INIT 
     if(state == 0){
+      parameter.setupDisplay();
+      
       communication.setupGSMModule();
       stateMachine.updateStateMachine(0,1);
-    } else if(state == 1){
       
+    } else if(state == 1){
+      parameter.setupScreen("Setting up wifi");
       if(! wifi.checkConnection()){
         wifi.setUsernamePassword(parameter.ssid, parameter.password);
       }
+      parameter.setupScreen("Wifi connected");
 
       uint8_t imei = communication.getIMEINumber();
       if (imei <= 0){
+        parameter.setupScreen("Connecting to GSM");        
         communication.setupGSMModule();
       } else {
+        parameter.setupScreen("GSM connected");
         stateMachine.updateStateMachine(4,0);
       }
     }
@@ -160,6 +163,8 @@ void Core::stateMachineInitialize(){
     break;
    case 4: // dummy!!
     if(state == 0){ 
+      Serial.println("in here ");
+      parameter.standByMsgs();
       //Serial.println("State idle");
       //delay(2000);
     }
