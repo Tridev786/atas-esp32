@@ -109,8 +109,12 @@ void Core::stateMachineInitialize(){
   case 0: // INIT 
     if(state == 0){
       parameter.setupDisplay();
-      
-      communication.setupGSMModule();
+      parameter.setupScreen("Connecting to GSM.");
+      bool systemStatus = communication.setupGSMModule();
+      if(systemStatus){
+        parameter.setupScreen("Connected to GSM");
+      }
+      delay(3000);
       stateMachine.updateStateMachine(0,1);
       
     } else if(state == 1){
@@ -122,10 +126,11 @@ void Core::stateMachineInitialize(){
 
       uint8_t imei = communication.getIMEINumber();
       if (imei <= 0){
-        parameter.setupScreen("Connecting to GSM");        
+        parameter.setupScreen("Reonnecting to GSM");        
         communication.setupGSMModule();
       } else {
-        parameter.setupScreen("GSM connected");
+        parameter.setupScreen("Setup completed");
+        delay(5000);
         stateMachine.updateStateMachine(4,0);
       }
     }
@@ -163,10 +168,10 @@ void Core::stateMachineInitialize(){
     break;
    case 4: // dummy!!
     if(state == 0){ 
-      Serial.println("in here ");
+      //Serial.println("in here ");
       parameter.standByMsgs();
       //Serial.println("State idle");
-      //delay(2000);
+      delay(2000);
     }
     break;
   }

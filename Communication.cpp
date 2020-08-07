@@ -16,6 +16,7 @@ Communication::Communication(){
 bool Communication::setupGSMModule(){
   fonaSerial->begin(4800);
   if (! fona.begin(*fonaSerial)) {
+    parameter.setupScreen("GSM connected");
     Serial.println(F("Couldn't find A.T.A.S GSM Module"));
   }
 }

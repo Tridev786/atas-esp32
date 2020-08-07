@@ -59,7 +59,7 @@ class Parameter
       displayController.setDisplayPosition(0,1,"Safety Starts From");
       displayController.setDisplayPosition(1,6,"A.T.A.S");
       displayController.setDisplayPosition(2,0,"Please wait...");
-      displayController.setDisplayPosition(2,0,"message");
+      displayController.setDisplayPosition(3,0,message);
     }
 
   private:

@@ -57,22 +57,13 @@ void Parameter::displayDefault(int displayValue){
         displayController.setDisplayPosition(1,3,"Be Worlds No 1");
         displayController.setDisplayPosition(2,3,"In Preventing");
         displayController.setDisplayPosition(3,2,"Theft And Murder");
-        standByMsgCounter = 0;
+        standByMsgCounter = 6;
       break;
     case 6:
         displayController.clearAll();
         displayController.setDisplayPosition(0,0,"A.T.A.S Theft Sensor");
         displayController.setDisplayPosition(1,3,"Be Worlds No 1");
-        displayController.setDisplayPosition(2,3,"In Preventing");
-        displayController.setDisplayPosition(3,2,"Theft And Murder");
-        standByMsgCounter = 0;
-      break;
-    case 7:
-        displayController.clearAll();
-        displayController.setDisplayPosition(0,0,"A.T.A.S Theft Sensor");
-        displayController.setDisplayPosition(1,3,"Be Worlds No 1");
-        displayController.setDisplayPosition(2,3,"In Preventing");
-        displayController.setDisplayPosition(3,2,"Theft And Murder");
+        displayController.setDisplayPosition(3,0,"Sys Status: LIVE");
         standByMsgCounter = 0;
       break;
   }

@@ -65,7 +65,7 @@ void Task1code( void * pvParameters ){
       // Recieve calls
       // Recieve messages
     }
-    delay(100);
+    delay(1000);
   }
 }
 
