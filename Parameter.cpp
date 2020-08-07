@@ -3,9 +3,6 @@
 void Parameter::standByMsgs(){
   long timeCalc = millis();
   long calculated = timeCalc - displayResetTimer;
-  Serial.print(calculated);
-  Serial.print(" : ");
-  Serial.println(standByMsgInterval);
   if( calculated > standByMsgInterval){
     displayDefault(standByMsgCounter);
     displayResetTimer = timeCalc;
@@ -81,20 +78,20 @@ void Parameter::displayDefault(int displayValue){
   }
 }
 
-void displayAlertTypes(int type, int number, int msgStatus, int callStatus){
-  displayController.clearAll();
-  displayController.setDisplayPosition(0,0,"A.T.A.S Theft Sensor");
-  displayController.setDisplayPosition(1,3,"Be Worlds No 1");
-  displayController.setDisplayPosition(2,0,"Msg Status: ");
-
-  if(msgStatus == false){
-    displayController.setDisplayPosition(2,13,"Failed");
-  }else{   
-    displayController.setDisplayPosition(2,13,"Success");
-  }
-  
-  displayController.setDisplayPosition(3,2,"Theft And Murder");
-}
+//void displayAlertTypes(int type, int number, int msgStatus, int callStatus){
+//  displayController.clearAll();
+//  displayController.setDisplayPosition(0,0,"A.T.A.S Theft Sensor");
+//  displayController.setDisplayPosition(1,3,"Be Worlds No 1");
+//  displayController.setDisplayPosition(2,0,"Msg Status: ");
+//
+//  if(msgStatus == false){
+//    displayController.setDisplayPosition(2,13,"Failed");
+//  }else{   
+//    displayController.setDisplayPosition(2,13,"Success");
+//  }
+//  
+//  displayController.setDisplayPosition(3,2,"Theft And Murder");
+//}
 
 //
 //displayController.lcdInitialize();
