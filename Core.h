@@ -5,6 +5,7 @@
 #include "StateMachine.h"
 #include "Parameter.h"
 #include "Communication.h"
+#include "Camera.h"
 
 class Core
 {
@@ -41,6 +42,14 @@ class Core
       stateMachine.updateStateMachine(3,0);
     }
 
+    void sendSnapShot(int cameraToTrigger){
+      if(cameraToTrigger == 1){
+        camera.camera1Trigger();
+      }else if(cameraToTrigger == 2){
+        camera.camera2Trigger();
+      }
+    }
+
     void updateDoorClosedStatus(){
 
       if(doorClosed == 0){
@@ -61,12 +70,18 @@ class Core
     StateMachine stateMachine;
     Parameter parameter;
     Communication communication;
+    Camera camera;
     bool initializeGSM();
     byte pir1=0; 
     byte pir2=0; 
     byte pir3=0; 
     byte pir4=0; 
     byte pir5=0;
+    byte pir6=0; 
+    byte pir7=0; 
+    byte pir8=0; 
+    byte pir9=0; 
+    byte pir10=0;
     byte pir11=0; 
     byte pir12=0; 
     byte pir13=0;

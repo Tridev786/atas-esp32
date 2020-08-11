@@ -22,6 +22,19 @@ void setup()
   Wire.begin(); // start 2-wire communication
   Wire.setClock(400000L);
   Serial2.begin(19200, SERIAL_8N1, RX2, TX2);
+  
+  if(SPIFFS.begin()){
+    Serial.println("SPIFFS Initialize....ok");
+  }else{
+    Serial.println("SPIFFS Initialization...failed");
+  }
+   
+  //Format File System
+  if(SPIFFS.format()){
+    Serial.println("File System Formated");
+  }else{
+    Serial.println("File System Formatting Error");
+  }
 
   xTaskCreatePinnedToCore(
     Task1code,   /* Task function. */
@@ -56,8 +69,8 @@ void Task1code( void * pvParameters ){
           }
         }
       
-        if(commaCount == 9){
-          //Serial.println(bfr);
+        if(commaCount == 14){
+          Serial.println(bfr);
           core.updatePIRStatus(bfr);
         }
       }

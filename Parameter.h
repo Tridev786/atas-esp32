@@ -6,11 +6,13 @@
 class Parameter
 {
   public:
-    String ssid = "P.Tridev IPS";
-    String password = "Dharshinisri";
+    String ssid = "Ionic2.4G";
+    String password = "8825958660";
     const static int secPriorityCount = 5;
     
     int numbersActive[10] = {1,1,1,0,1,1,1,1,1,1};
+    String lineToken = "qEe9tA1WDJiKCq0V9PxOv0dAmNNFzC0zoP6QbezU11E";
+    
     int secondPriorityNumbers[secPriorityCount] = {2,3,7,8,9}; // Send address and Location to police and fire station
 
     int thirdPriorityNumbers[10] = {1,1,0,1,1,1,1,0,0,1}; // Fire station conditions
@@ -66,16 +68,16 @@ class Parameter
 
     Display displayController;
     
-    String number0 = "9715904917";
-    String number1 = "9715904917";
-    String number2 = "9715904917";
-    String number3 = "9715904917";
-    String number4 = "9715904917";
-    String number5 = "9715904917";
-    String number6 = "9715904917";
-    String number7 = "9715904917";
-    String number8 = "9715904917";
-    String number9 = "9715904917";
+    String number0 = "8825958660";
+    String number1 = "8825958660";
+    String number2 = "8825958660";
+    String number3 = "8825958660";
+    String number4 = "8825958660";
+    String number5 = "8825958660";
+    String number6 = "8825958660";
+    String number7 = "8825958660";
+    String number8 = "8825958660";
+    String number9 = "8825958660";
     int standByMsgCounter = 0;
     long displayResetTimer = 0;
     void displayDefault(int displayValue);

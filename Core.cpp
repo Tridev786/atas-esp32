@@ -4,6 +4,7 @@
 #include "Parameter.h"
 #include "Communication.h"
 
+
 Core::Core(){
   wifi = Wifi();
   stateMachine = StateMachine();
@@ -32,11 +33,16 @@ void Core::updatePIRStatus(char values[]){
   pir3 = values[4];
   pir4 = values[6];
   pir5 = values[8];
-  pir11 = values[10];
-  pir12 = values[12];
-  pir13 = values[14];
-  pir14 = values[16];
-  pir15 = values[18];
+  pir6 = values[10];
+  pir7 = values[12];
+  pir8 = values[14];
+  pir9 = values[16];
+  pir10 = values[18];
+  pir11 = values[20];
+  pir12 = values[22];
+  pir13 = values[24];
+  pir14 = values[26];
+  pir15 = values[28];
 }
 
 void Core::checkAndSetPrioritySensorTriggerStatus(){
@@ -60,6 +66,21 @@ void Core::checkAndSetPrioritySensorTriggerStatus(){
     Serial.println(F("Priority 5 sensor triggered"));
     lastTiggeredSensor = 1;
     triggerFirstPrioritySensors();
+  }else if(pir6=='1'){
+    Serial.println(F("First camera triggered"));
+    sendSnapShot(1);
+  }else if(pir7=='1'){
+    Serial.println(F("Second camera triggered"));
+    sendSnapShot(2);
+  }else if(pir8=='1'){
+    Serial.println(F("Third camera triggered"));
+    sendSnapShot(3);
+  }else if(pir9=='1'){
+    Serial.println(F("Forth camera triggered"));
+    sendSnapShot(4);
+  }else if(pir10=='1'){
+    Serial.println(F("Fifth camera triggered"));
+    sendSnapShot(5);
   }else if(pir11=='1'){
     Serial.println(F("Fire sensor triggered"));
     lastTiggeredSensor = 2;
@@ -77,6 +98,7 @@ void Core::checkAndSetPrioritySensorTriggerStatus(){
     lastTiggeredSensor = 0;
     triggerFirstPrioritySensors();
   }
+  
   // 1 means door closed and 0 means door opened
   if(doorClosed==1 && pir14=='0'){
     Serial.println(F("Door has been opened"));
